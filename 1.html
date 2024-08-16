@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #343a40;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #212529;
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .container-fluid {
+            padding: 40px;
+        }
+
+        .legend {
+            background-color: #343a40;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeInLeft 1.5s ease;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        #transcript {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        #class-words {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-height: 600px;
+            overflow-y: auto;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        #class-words h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #212529;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #class-words table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+
+        #class-words th,
+        #class-words td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        #class-words th {
+            background-color: #f8f9fa;
+            color: #495057;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Highlight Styles */
+        .intro {
+            background-color: #ffeb3b;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .symptoms {
+            background-color: #8bc34a;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .med-history {
+            background-color: #03a9f4;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .psychosocial {
+            background-color: #e91e63;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .health-behavior {
+            background-color: #ff9800;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .physical-exam {
+            background-color: #f44336;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .emotions {
+            background-color: #9c27b0;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .medication {
+            background-color: #ffcc80;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .tests-offered {
+            background-color: #64ffda;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .financial {
+            background-color: #ffd54f;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .followup {
+            background-color: #ff7043;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <!-- Legend Section -->
+        <div class="legend">
+            <div class="row">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffeb3b;"></span>Introduction</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #8bc34a;"></span>Symptoms</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #03a9f4;"></span>Medical History</div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #e91e63;"></span>Psychosocial Information</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #ff9800;"></span>Health
+                        Behaviors</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #f44336;"></span>Physical Exam</div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #9c27b0;"></span>Emotions</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffcc80;"></span>Medication</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #64ffda;"></span>Tests
+                        Offered</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffd54f;"></span>Financial</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #ff7043;"></span>Follow
+                        up and Closing</div>
+                </div>
+            </div>
+        </div>
+
+        <h1>Transcript Analysis</h1>
+
+
+        <div class="row">
+            <!-- Transcript Section -->
+            <div class="col-md-7" id="transcript">
+                <p>Doctor: <span class="intro">Hi</span>.</p>
+                <p>Patient: <span class="intro">Hi</span>.</p>
+                <p>Doctor: I’m Doctor <span class="intro">(Name)</span>.</p>
+                <p>Patient: <span class="intro"> Nice tomeet you.</span></p>
+                <p>Doctor: And you’re <span class="intro">(patient’s first and last name)</span>?</p>
+                <p>Patient:Yes.</p>
+                <p>Doctor: I understand that umm, you’re new here today and you have some issues. </p>
+                <p>Patient: Yes ma’am.</p>
+                <p>Doctor: Okay. Let me get a little familiar with you here. Most of them are <span
+                        class="symptoms">stomach issues</span>?</p>
+                <p>Patient: Yeah. I, <span class="symptoms">I’ve been having some stomach pains</span> that just won’t
+                    completely go away,<span class="emotions"> it’s really annoying. </span></p>
+                <p>Doctor: Mm-hmm, and how old are you-</p>
+                <p>Patient: <span class="symptoms">And I’ve also been feeling pretty tired</span>.</p>
+                <p> Doctor: Uh, how old are you?</p>
+                <p> Patient:<span class="psychosocial">Forty-seven.</span></p>
+                <p>Doctor: Forty-seven? Any surgeries?</p>
+                <p>Patient: Yeah , umm, <span class="med-history">I had a C-section with my oldest and then after my
+                        second son</span> </p>
+                <p>Doctor: -Vertical or horizontal?</p>
+                <p>Patient: <span class="med-history">Yes-, umm, after my second then I had my tubes</span> tied.</p>
+                <p>Doctor: Okay. So, umm, let me just go back over a couple things before we get into the particulars
+                    here.</p>
+                <p>Patient: Mm-hmm.</p>
+                <p>Doctor: You are on <span class="medication">Lipitor</span>?</p>
+                <p>Patient: I am.</p>
+                <p>Doctor: How long is that-, the Lipitor? </p>
+                <p>Patient: Uh, five years now.</p>
+                <p>Doctor: Really. Hmm. You’ve had a <span class="med-history">colonoscopy before?</span> </p>
+                <p>Patient: Mm-hmm.</p>
+                <p>Doctor: Who did that for you?</p>
+                <p>Patient: Umm, Doctor O’Neill uh, ordered it-, up in Pittsburgh, umm-.</p>
+                <p>Doctor: Out of state?</p>
+                <p>Patient: Yes-,</p>
+                <p>Doctor: Not—I wouldn’t know him then</p>
+                <p>Patient: Yes, yeah. </p>
+                <p>Doctor: How old were you then</p>
+                <p>Patient: It was umm, <span class="med-history">five years ago</span> so-,</p>
+                <p>Doctor: Five years.</p>
+                <p>Patient: Yeah</p>
+                <p>Doctor: Had you been bleeding or just having this <span class="symptoms">stomach pain</span> or what?
+                </p>
+                <p>Patient: Some <span class="symptoms">pain, discomfort, constipation, diarrhea back</span> and forth
+                    so. He wanted to see if it was anything more serious and when everything came back normal he said
+                    <span class="med-history">it was IBS.</span></p>
+                <p>Doctor: So, when did he tell you you would do the next one?</p>
+                <p>Patient: We hadn’t really talked about it. Umm-,</p>
+                <p>Doctor: -Did he tell you not due for more than five years, three years, ten years anything like that?
+                </p>
+                <p>Patient: No. Umm, it was basically just managing the symptoms.</p>
+                <p>Doctor: Are you basically new to the area or?</p>
+                <p>Patient: I am, I just moved here six weeks ago.</p>
+                <p>Doctor: Did ya? Penco. okay. Does uh-, high cholesterol, heart disease, run in your family?</p>
+                <p>Patient: Well my dad’s <span class="med-history">got high blood pressure </span></p>
+                <p>Doctor: Uh-huh-,</p>
+                <p>Patient: -And my brother. Umm, but I haven’t seen anybody else with high cholesterol</p>
+                <p>Doctor: How bout your mom? Is she pretty well?</p>
+                <p>Patient: Umm, she has diabetes and umm, some arthritis in her knees but besides that she’s doing
+                    good.</p>
+                <p>Doctor: Okay. There’s another risk factor. Okay. Umm, when you were<span class="med-history">pregnant
+                        with your children</span>, did you have any gestational</p>
+                <p>Patient: Mm-mm (no).</p>
+                <p>Doctor: Okay. Umm, so basically you’ve been dealing with this <span class="med-history">IBS</span>
+                    for five plus years</p>
+                <p>Patient: Yeah. Yeah.</p>
+                <p>Doctor: Okay. You have any basic allergies to medicines</p>
+                <p>Patient: No ma’am.</p>
+                <p>Doctor: Any environmental allergies?</p>
+                <p>Patient: Mm-mm (no).</p>
+                <p>Doctor: Okay. And you yourself, you’re not adopted are you?</p>
+                <p>Patient: No.</p>
+                <p>Doctor: So basically you know your family history. You grew up pretty well personally?</p>
+                <p>Patient: Mm-hmm.</p>
+                <p>Doctor: Okay. And umm, tell me a little bit about your periods? Been regular? </p>
+                <p>Patient: I’ve always been real regular but lately they’ve gotten umm, where they’re spacing a little
+                    further apart. A little bit lighter. </p>
+                <p>Doctor: Mm-hmm.</p>
+                <p>Patient: So. But I’ve never been one that had the, the crampy, hard periods.</p>
+                <p>Doctor: And you <span class="health-behavior">used to be a smoker?</span></p>
+                <p>Patient: Used to be</p>
+                <p>Doctor: (Laugh) that’s a good thing.</p>
+                <p>Patient: Yep.</p>
+                <p>Doctor: That’s nice. Moderate amount of social alcohol? Is that it</p>
+                <p>Patient: Mm,<span class="health-behavior">two maybe three glasses of wine</span> a week with dinner.
+                </p>
+                <p>Doctor: Are you <span class="psychosocial">married</span>?</p>
+                <p>Patient: No, divorced</p>
+                <p>Doctor: Okay.</p>
+                <p>Patient: Happily divorced.</p>
+                <p>Doctor: Happily divorced (laughs). That takes a lot stress off sometimes.</p>
+                <p>Patient: (Laughs)</p>
+                <p>Doctor: (Laughing) it really does. Did you leave the other half up in-</p>
+                <p>Patient: -Yeah, he’s-, he’s out in uh, Pennsylvania</p>
+                <p>Doctor: (Laugh) yeah it’s a-,</p>
+                <p>Patient: -Doing his own thing</p>
+                <p>Doctor: Sometimes distance is a good thing.</p>
+                <p>Patient: Oh yeah.</p>
+                <p>Doctor: What do you do in your job?</p>
+                <p>Patient: Umm, well <span class="psychosocial">I work in-, with the office staff</span> and
+                    bookkeeping.</p>
+                <p>Doctor: -So you supervise the jobs or the people-?</p>
+                <p>Patient: -No ma’am, I don’t I supervise but I, I’m in the office-</p>
+                <p>Doctor: -You’re in office.</p>
+                <p>Patient: Mm-hmm. Work with billing and whatnot.</p>
+                <p>Doctor: You’ve always done that type of work?</p>
+                <p>Patient: Yeah, when I was working with US Steel up in Pittsburgh, I was uh, working in the office.
+                </p>
+                <p>Doctor: Mm-hmm. How’d you choose this area?</p>
+                <p>Patient: Well umm, US Steel was getting ready for another round of layoff’s and so I was looking for
+                    something with somewhat similar office needs… I found this one on the internet and it just looked
+                    like a really good opportunity for a fresh start.</p>
+                <p>Doctor: But you don’t have family here?</p>
+                <p>Patient: No. It’s just me. My son might be joining me umm, in probably six months to a year-, it
+                    depends on how his job goes.</p>
+                <p>Doctor: Okay. Well it’s a pretty nice place to live.</p>
+                <p>Patient: It’s beautiful.</p>
+                <p>Doctor: Uh, and the people are in general, good people. They really are.</p>
+                <p>Patient: I really like it. It, it’s umm, I mean you got all the conveniences of-, you know, it’s a
+                    short distance to get to what you need but at the same time, it’s not so busy and so over-packed
+                    like Pittsburgh is.</p>
+                <p>Doctor: There’s a lot to offer in the way of education and arts, science, you name it.</p>
+                <p>Doctor: Umm, the hemorrhoids that you’ve had, were they related to <span
+                        class="med-history">pregnancy</span> or?</p>
+                <p>Patient: Umm-</p>
+                <p>Doctor: -Something-</p>
+                <p>Patient: -I didn’t notice any problems with them until umm, I <span class="symptoms">started having
+                        more issues with constipation</span>-</p>
+                <p>Doctor: -Mm-hmm.</p>
+                <p>Patient: Just the straining. So every once in a while they’ll just be a tiny bit of blood on the
+                    tissue but that’s it.</p>
+                <p>Doctor: When was the last complete physical you had?</p>
+                <p>Patient: A year.</p>
+                <p>Doctor: <span class="med-history">pap smear</span>, breast exam-</p>
+                <p>Patient: Mm-hmm, it’s been a year.</p>
+                <p>Doctor: -And all that stuff. Okay. Now lets get into your bowel issue a little bit here and then
+                    schedule a complete physical-</p>
+                <p>Patient: -Okay-</p>
+                <p>Doctor: -Like to go over you from top to bottom.</p>
+                <p>Patient: Sure.</p>
+                <p>Doctor: Any <span class="symptoms">chest pain</span> of any kind?</p>
+                <p>Patient: Mm-mm (no).</p>
+                <p>Doctor: So going back to your tummy. Did umm, have you ever had an ulcer? A documented ulcer from
+                    worry or stress or anything?</p>
+                <p>Patient: No.</p>
+                <p>Doctor: Okay. How old were you when you started getting variations of <span
+                        class="symptoms">diarrhea?</span> </p>
+                <p>Patient: Umm, it kind of came and went for a bit umm, for about I guess probably good close to five
+                    years before umm, we did the <span class="med-history">colonoscopy</span> and he diagnosed me.</p>
+                <p>Doctor: So if you get a flare up now, do you have any medicine to take to quiet it down?</p>
+                <p>Patient: Umm, if I’m constipated I do the Ex-Lax and umm, if I have diarrhea, usually it’s just like
+                    one or two little bouts and then you know, flip over into constipation and so I don’t usually have
+                    to do anything for diarrhea.</p>
+                <p>Doctor: But you’re not taking a lot of over the counter Imodium or-</p>
+                <p>Patient: -No, umm, I try to stay on top of it <span class="medication">taking plenty of the
+                        Metamucil</span> just to keep the fiber going.</p>
+                <p>Doctor: Yeah. Well that sounds good. umm-</p>
+                <p>Patient: -And I’ve had the diarrhea and constipation-, I’ve been dealing with that for years. Umm,
+                    but this changed. This is-, this is different so it’s just got me concerned-</p>
+                <p>Doctor: -But-, what we do-, we have another change in bowel habits-</p>
+                <p>Patient: -Mm-hmm-</p>
+                <p>Doctor: -And you have some <span class="symptoms">abdomen pain.</span> </p>
+                <p>Patient: Mm-hmm.</p>
+                <p>Doctor: Okay. I think we need to work the GI tract and possibly get another <span
+                        class="med-history">colonoscopy.</span> If you’re up to it.</p>
+                <p>Patient: Well not today but-</p>
+                <p>Doctor: -No-, -Not.</p>
+                <p>Patient: Okay-</p>
+                <p>Doctor: You’ve had a lot going on so this can just be situational-</p>
+                <p>Patient: -Yeah-</p>
+                <p>Doctor: -But I think that umm-, anybody in your family have colon cancer?</p>
+                <p>Patient: No. No, uh-, my umm, my mom’s mom, <span class="med-history">had cancer</span> umm, but she
+                    was in her nineties and we-</p>
+                <p>Doctor: -Oh-</p>
+                <p>Patient: I mean I’ve </span class="symptoms">had the constipation</span>, I’ve <span
+                        class="symptoms">had the diarrhea</span>-, but it-.</p>
+                <p>Doctor: -It’s never been like this-</p>
+                <p>Patient: -It’s been happening before. I’ve just never had it happen in the same bowel movement.</p>
+                <p>Doctor: Oh really-</p>
+                <p>Patient: -I mean this is-, it’s just different. This is different-, I will strain and push and just
+                    liquid will come out and then all of a sudden it will just be a solid piece of stool. And then
+                    liquid. And it’s-, I, I’ve never had that happen.</p>
+                <p>Doctor: So, but I still feel like you need, you know, somebody to look at your bowel.</p>
+                <p>Patient: Okay.</p>
+                <p>Doctor: Okay. So we’ll go ahead-, are you <span class="symptoms">having pain in your stomach</span>
+                    now?</p>
+                <p>Patient: It’s tender.</p>
+                <p>Doctor: Mm-hmm. Does it wake you up at night when you go to bed?</p>
+                <p>Patient: Mm-mm (no).</p>
+                <p>Doctor: Let me get that young lady in here, give me just a second. Uh, Natalie? You can button up.
+                    Okay I’m going to get her ready for a general physical and I’ll need all my usual CBC and do,
+                    (inaudible 59:43.9). How we prove liver functions.</p>
+                <p>Nurse: Alright.</p>
+                <p>Doctor: Okay. And uh, get me a c-peptide on her. So, it’ll be a B, 70.0.</p>
+                <p>Nurse: Okay.</p>
+                <p>Doctor: With her physical. And if you could just write the instructions on the top.</p>
+                <p>Nurse: Alright, I’ll be back.</p>
+                <p>Patient: Is that for me?</p>
+                <p>Doctor: This is Natalie-</p>
+                <p>Patient: <span class="intro">Hi Natalie</span>.</p>
+                <p>Doctor: -One of the ladies that run this office.</p>
+                <p>Patient: Alright.</p>
+                <p>Doctor: All three of em know where everything is, know where your charts are, answer your questions.
+                </p>
+                <p>Patient: Okay.</p>
+                <p>Doctor: And umm, they always know where I am.</p>
+                <p>Patient: Alright.</p>
+                <p>Doctor: Okay.</p>
+                <p>Patient: That’s a good thing.</p>
+                <p>Doctor: (laughs) That’s right. Did we get your umm, prior records by any chance?</p>
+                <p>Patient: Not yet.</p>
+                <p>Doctor: -Here’s for you to give to the lab. But call ahead of time and see how things are running.
+                </p>
+                <p>Patient: -Okay-</p>
+                <p>Doctor: The lab is over on the hill.</p>
+                <p>Patient: Okay.</p>
+                <p>Doctor: Okey-doke. Did you need-, you’re not really taking anything do you right now-, really are
+                    you?</p>
+                <p>Patient: Just <span class="medication">the Lipitor</span>.</p>
+                <p>Doctor: Do you have plenty?</p>
+                <p>Patient: Umm, I’ve got enough for right now, yeah. Umm, when we do the, the bigger visit-</p>
+                <p>Doctor: And if you were to have a problem, simple, and I know you, just call the office.</p>
+                <p>Doctor: You’re welcome. We’re available. Okay.</p>
+                <p>Patient: Umm, any of these things that you’re checking for, would they have anything to do with why
+                    I’m so tired? Because it’s-, I’ve just been-</p>
+                <p>Doctor: -Yeah-</p>
+                <p>Patient: -Worried for that.</p>
+                <p>Doctor: Well I think you’ve been through a lot, but we are going to check everything.</p>
+                <p>Patient: Okay.</p>
+                <p>Patient: Thank you.</p>
+                <p>Doctor: You’re more than welcome.</p>
+                <p>Patient: I appreciate it-</p>
+                <p>Doctor:<span class="followup">Nice to meet you</span>.</p>
+                <p>Patient: <span class="followup">Nice to meet you</span>. Check out up here. Thank you.</p>
+                <p>Doctor: Yes ma’am. And make your appointment after you go-</p>
+                <p>Patient: -Okay, thanks.</p>
+
+
+
+
+
+            </div>
+
+            <div class="col-md-5" id="class-words">
+                <h2>Identified Entities</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Words</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-words-body">
+                        <!-- JavaScript will dynamically insert rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+    // Function to get all words in each span class
+    function getAllWords() {
+        const classWords = {};
+        const spans = document.querySelectorAll('#transcript span');
+
+        // Collect words by class
+        spans.forEach(span => {
+            const className = span.className;
+            const words = span.textContent.trim();
+            if (!classWords[className]) {
+                classWords[className] = [];
+            }
+            classWords[className].push(words);
+        });
+
+        const tbody = document.getElementById('class-words-body');
+        tbody.innerHTML = ''; // Clear existing content
+
+        // Process each class
+        for (const className in classWords) {
+            const row = document.createElement('tr');
+
+            const classNameCell = document.createElement('td');
+            classNameCell.textContent = className;
+            row.appendChild(classNameCell);
+
+            const wordsCell = document.createElement('td');
+            wordsCell.textContent = classWords[className].join(', ');
+            row.appendChild(wordsCell);
+
+            tbody.appendChild(row);
+        }
+    }
+
+    // Call the function to get and display all words
+    getAllWords();
+    // Prepare data for the chart
+
+
+</script>
+
+</html>

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #343a40;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #212529;
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .container-fluid {
+            padding: 40px;
+        }
+
+        .legend {
+            background-color: #343a40;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeInLeft 1.5s ease;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        #transcript {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        #class-words {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-height: 600px;
+            overflow-y: auto;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        #class-words h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #212529;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #class-words table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+
+        #class-words th,
+        #class-words td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        #class-words th {
+            background-color: #f8f9fa;
+            color: #495057;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Highlight Styles */
+        .intro {
+            background-color: #ffeb3b;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .symptoms {
+            background-color: #8bc34a;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .med-history {
+            background-color: #03a9f4;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .psychosocial {
+            background-color: #e91e63;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .health-behavior {
+            background-color: #ff9800;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .physical-exam {
+            background-color: #f44336;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .emotions {
+            background-color: #9c27b0;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .medication {
+            background-color: #ffcc80;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .tests-offered {
+            background-color: #64ffda;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .financial {
+            background-color: #ffd54f;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .followup {
+            background-color: #ff7043;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <!-- Legend Section -->
+        <div class="legend">
+            <div class="row">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffeb3b;"></span>Introduction</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #8bc34a;"></span>Symptoms</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #03a9f4;"></span>Medical History</div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #e91e63;"></span>Psychosocial Information</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #ff9800;"></span>Health
+                        Behaviors</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #f44336;"></span>Physical Exam</div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #9c27b0;"></span>Emotions</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffcc80;"></span>Medication</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #64ffda;"></span>Tests
+                        Offered</div>
+                    <div class="legend-item"><span class="legend-color"
+                            style="background-color: #ffd54f;"></span>Financial</div>
+                    <div class="legend-item"><span class="legend-color" style="background-color: #ff7043;"></span>Follow
+                        up and Closing</div>
+                </div>
+            </div>
+        </div>
+
+        <h1>Transcript Analysis</h1>
+
+
+        <div class="row">
+            <!-- Transcript Section -->
+            <div class="col-md-7" id="transcript">
+                <p>Doctor: <span class="intro">Hello there</span></p>
+
+                <p>Patient: <span class="intro">How are you Dr. (name)?</span> It’s nice to meet you.</p>
+
+                <p>Doctor: It’s nice to meet you. So thanks for your patience today. <span class="intro">How can I help
+                        you?</span></p>
+
+                <p>Patient: Um. <span class="symptoms">I’ve been having some stomach pains that don’t completely go away
+                    </span>. <span class="emotions">It’s really annoying.</span> And <span class="symptoms">I’ve been
+                        feeling pretty tired</span></p>
+
+                <p>Doctor: How long has this been going on?</p>
+
+                <p>Patient: About the last couple of weeks</p>
+
+                <p>Doctor: Okay. And is your stomach pain constant or it comes and goes?</p>
+
+                <p>Patient: Now <span class="symptoms">it’s constant</span>.</p>
+
+                <p>Doctor: Where do you feel it?</p>
+
+                <p>Patient: Just all over my abdomen.</p>
+
+                <p>Doctor: Okay and um what makes it worse and what makes it better?</p>
+
+                <p>Patient: Um. Huh. <span class="symptoms">Worse, Um if I have a full stomach. Or um, if I’m
+                        constipated</span>.</p>
+
+                <p>Doctor: Okay. Do you tend to get constipated?</p>
+
+                <p>Patient: It’s off and on.</p>
+
+                <p>Doctor: Do you tend to I mean you say down here you <span class="med-history">have IBS</span>, do you
+                    tend to fluctuate between loose and constipation?</p>
+
+                <p>Patient: Mm.</p>
+
+                <p>Doctor: You’re not used to one or the other?</p>
+
+                <p>Patient: Um no not really well I guess I probably tend towards the <span
+                        class="symptoms">constipation.</span></p>
+
+                <p>Doctor: Okay. Okay. Any blood in the stool that you’ve noticed?</p>
+
+                <p>Patient: No not in the stool. I mean once in a while I’ll get a tiny bit on the tissue but I mean
+                    that’s</p>
+
+                <p>Doctor: When you’ve been pushing a little?</p>
+
+                <p>Patient: Yeah. It’s. Used to that no big deal.</p>
+
+                <p>Doctor: Any nausea vomiting?</p>
+
+                <p>Patient: Mm mm.</p>
+
+                <p>Doctor: Any <span class="symptoms">heartburn</span></p>
+
+                <p>Patient: Um once in a while but that’s normal.</p>
+
+                <p>Doctor: Okay. And um do you take any kind of fiber supplement or anything?</p>
+
+                <p>Patient: <span class="medication">I’ve done Metamucil.</span></p>
+
+                <p>Doctor: How much do you take it?</p>
+
+                <p>Patient: Uh I do that three times a day about.</p>
+
+                <p>Doctor: Wow. You feel like that’s working?</p>
+
+                <p>Patient: I think that um. I think I’m might at a new place where it’s not.</p>
+
+                <p>Doctor: Mhm</p>
+
+                <p>Patient: But I mean it’s always worked before.</p>
+
+                <p>Doctor: Describe your pain. Is it cramping pain is it burning pain? Is it throbbing pain?</p>
+
+                <p>Patient: It’s more like uh</p>
+
+                <p>Doctor: Discomfort?</p>
+
+                <p>Patient: An ache.</p>
+
+                <p>Doctor: Okay.</p>
+
+                <p>Patient: <span class="symptoms">It’s more like an ache. Like a dull ache.</span></p>
+
+                <p>Doctor: Okay. And um, is it sort of similar to your um pain you’ve had before for IBS?</p>
+
+                <p>Patient: Mm mm.</p>
+
+                <p>Doctor: Okay.</p>
+
+                <p>Patient: No it’s different.</p>
+
+                <p>Doctor: Okay. Have you taken anything for it?</p>
+
+                <p>Patient: No. Not medicine wise.</p>
+
+                <p>Doctor: What have you taken?</p>
+
+                <p>Patient: Well no I just tried changing my diet.</p>
+
+                <p>Doctor: Okay. Do you find that your Irritable Bowel is very uh responsive to your diet?</p>
+
+                <p>Patient: No not so much. It was more just managing symptoms</p>
+
+                <p>Doctor: Okay</p>
+
+                <p>Patient: When the episodes would pop up.</p>
+
+                <p>Doctor: Sure. How’s your <span class="emotions">stress?</span></p>
+
+                <p>Patient: Um it’s a little bit more now than it has been but you know I feel like I’m handling it well
+                </p>
+
+                <p>Doctor: Good.</p>
+
+                <p>Patient: So.</p>
+
+                <p>Doctor: Okay. Alright good. And it looks like you got not much alcohol. How about your caffeine?</p>
+
+                <p>Patient: Uh a <span class="health-behavior">few cups of coffee today is it.</span></p>
+
+                <p>Doctor: Okay. And uh no surgeries? Oh yes you have had surgeries. Um. C section, tubes tied, and
+                    laparoscopic</p>
+
+                <p>Patient: Well <span class="med-history">I had some abdominal pain after my youngest </span> was born
+                    so they went in a looked around and didn’t find anything.</p>
+
+                <p>Doctor: Alright very good. And you’re taking the, how long have you been taking the <span
+                        class="medication">Lipitor? </span></p>
+
+                <p>Patient: 5 years.</p>
+
+                <p>Doctor: Okay. When’s the last time you had your <span class="tests-offered">blood work done </span>
+                    for that?</p>
+
+                <p>Patient: Uh it’s been right at a year.</p>
+
+                <p>Doctor: So you’re about due.</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Doctor: Okay. And now are you, are you new to the area or did you um or are you just making a change
+                    in doctors?</p>
+
+                <p>Patient: No I’m new.</p>
+
+                <p>Doctor: Okay. Where did you move from?</p>
+
+                <p>Patient: From Pittsburgh.</p>
+
+                <p>Doctor: What brought you to this area?</p>
+
+                <p>Patient: Work (laughs) change. Sometimes you just need a change.</p>
+
+                <p>Doctor: Change is good.</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Doctor: So so far so good?</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Doctor: Good. Good good.</p>
+
+                <p>Patient: I like it here.</p>
+
+                <p>Doctor: That’s great! You get some regular exercise?</p>
+
+                <p>Patient: Uh well I was going from more like <span class="health-behavior">brisk walks</span>. I still
+                    haven’t found a gym yet but I I’m still looking. It’s been kinda busy but um <span
+                        class="health-behavior">brisk walks</span> but the last couple of weeks not so much. It’s just
+                    been I’m exhausted. And by the end of the days it’s it’s I just need rest.</p>
+
+                <p>Doctor: Are you sleeping okay?</p>
+
+                <p>Patient: Yeah about normal.</p>
+
+                <p>Doctor: Okay. About how much?</p>
+
+                <p>Patient: 5, 6 hours. Yeah.</p>
+
+                <p>Doctor: Okay. Oh and do y- do you still get regular periods?</p>
+
+                <p>Patient: Um they’re lighter but</p>
+
+                <p>Doctor: Okay</p>
+
+                <p>Doctor: Okay that’s good well I’m gonna just get you over there under that sheet and get you this.
+                </p>
+
+                <p>LEAVES ROOM AND THEN RETURNS TO EXAMINE PATIENT</p>
+
+                <p>Doctor: Now where do you work?</p>
+
+                <p>Patient: Um <span class="psychosocial">I work down at Pittsburgh Machinery.</span></p>
+
+                <p>Doctor: So has the abdominal pain gotten in the way of doing anything?</p>
+
+                <p>Patient: No.<span class="emotions">It’s just kinda annoying.</span></p>
+
+                <p>Doctor: Have you taken prescription medicines for your <span class="med-histroy">IBS</span> before?
+                </p>
+
+                <p>Patient: Mm mm. It’s just it’s tender there and that’s more tender.</p>
+
+                <p>Doctor: It’s pretty tender. And right here okay?</p>
+
+                <p>Patient: Yes. I mean <span class="Physical-exam">it’s uncomfortable over there </span>.</p>
+
+                <p>Doctor: Do you feel bloated?</p>
+
+                <p>Patient: A little bit.</p>
+
+                <p>Doctor: Have you <span class="med-history">had a colonoscopy before?</span></p>
+
+                <p>Patient: Two years ago.</p>
+
+                <p>Doctor: Over here, is that uncomfortable?</p>
+
+                <p>Patient: MmMm (no)</p>
+
+                <p>Doctor: So it’s more around-- <span class="physical-exam">this feel okay?</span></p>
+
+                <p>Patient: It’s just kind of in general uncomfortable</p>
+
+                <p>Doctor: Okay. Not particularly in one space.</p>
+
+                <p>Patient: Um over here was more</p>
+
+                <p>Doctor: When I examined it it was more</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Doctor: Over there over on the left.</p>
+
+                <p>Patient: Yeah</p>
+
+                <p>Doctor: Mhm yeah. That’s how it happens. I mean if you had a, if you had to say what was different
+                    about your usual IBS pain and this? Just that it’s more constant or more severe or more..?</p>
+
+                <p>Patient: Well it’s. I didn’t <span class="symptoms">have constant pain</span> before and then um
+                    every once in a while I’ll have an episode where it flares up even more, more so.</p>
+
+                <p>Doctor: Mhm.</p>
+
+                <p>Patient: And that’s relatively new. Um I mean before it was just it was uncomfortable and I was
+                    constipated and <span class="symptoms">I had diarrhea and it was more of a nuisance.</span></p>
+
+                <p>Doctor: Okay</p>
+
+                <p>Patient: And now it’s there’s pain involved. And it’s um, I’m getting more concerned</p>
+
+                <p>Doctor: Mhm</p>
+
+                <p>Patient: Um because of the change</p>
+
+                <p>Doctor: Mhm</p>
+
+                <p>Patient: I’ve never had this before</p>
+
+                <p>Doctor: Okay. And so the pain the the so the pain was never a big component.</p>
+
+                <p>Patient: And being tired all the time too</p>
+
+                <p>Doctor: Uh huh</p>
+
+                <p>Patient: And that’s got me worried so</p>
+
+                <p>Doctor: Sure</p>
+
+                <p>Patient: The first time the pain was during my son’s birthday six months ago and then its off and on.
+                </p>
+
+                <p>Doctor: And that was pain.</p>
+
+                <p>Patient: Now all of a sudden it’s a constant pain.</p>
+
+                <p>Doctor: Okay. But you <span class="emotions">feel like </span>it’s been kinda off and on for six
+                    months?</p>
+
+                <p>Patient: It was off and on at first.</p>
+
+                <p>Doctor: Yeah.</p>
+
+                <p>Patient: In the last two three weeks it’s been constant.</p>
+
+                <p>Doctor: It’s been constant.</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Doctor: You haven’t had any <span class="symptoms">fever</span>?</p>
+
+                <p>Patient: No.</p>
+
+                <p>Doctor: I mean that’s my you know. I don’t wanna have to put you through a whole whole bunch of tests
+                </p>
+
+                <p>Patient: Right</p>
+
+                <p>Doctor: You know? On the other hand I I don’t wanna just be like oh it’s your IBS you know what I
+                    mean?</p>
+
+                <p>Patient: Mhm</p>
+
+                <p>Doctor: So it it’s kind of a tough call. So I keep asking you like the same questions fifty different
+                    ways just to kind of make sure I completely understand what’s going on.</p>
+
+                <p>Patient: It’s fine</p>
+
+                <p>Doctor: Um you know with it, what you’re saying and really it’s been present just intermittent for
+                    six months and in the last few weeks it’s been more constant.</p>
+
+                <p>Patient: Mhm</p>
+
+                <p>Doctor: Um you know that certainly could be your IBS I mean if you having any you know fevers and
+                    vomiting and stuff like that…</p>
+
+                <p>Patient: Right.</p>
+
+                <p>Doctor: I would think you were sick which y- you know I think what you worry about when you’re tender
+                    particularly on the left is something called Diverticulitis</p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: But that usually makes you pretty un- pretty unwell</p>
+
+                <p>Patient: Mhm.</p>
+
+                <p>Doctor: Usually with Diverticulitis you’re you have a significant you know you’re really, really
+                    uncomfortable and there’s a dramatic change.</p>
+
+                <p>Patient: Right</p>
+
+                <p>Doctor: But all of a sudden this has started. It wouldn’t be sort of smoldering off and on for a long
+                    time</p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: So I think that’s not likely.</p>
+
+                <p>Patient: Okay.</p>
+
+                <p>Doctor: You know I think what that is, is your <span class="med-history">IBS</span>. I think what I’d
+                    like to do is give you some a prescription for some medicine that just stops the cramping</p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: To see if that will help</p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: And then um also I’d like to <span class="tests-offered">some blood work</span> especially
+                    cuz of the tiredness because you don’t feel well. I want to make sure that you haven’t gotten anemic
+                    or that you know liver, kidney all that is doing well. If that’s okay with you.</p>
+
+                <p>Patient: Okay.</p>
+
+                <p>Doctor: So let’s let’s plan on that. Okay?</p>
+
+                <p>Patient: Okay.</p>
+
+                <p>Doctor: Um why don’t you get dressed and I’ll be right back. Okay?</p>
+
+                <p>Patient: Thank you.</p>
+
+                <p>Doctor: Sure. (leaves room 1:01:59-1:06:22) Alright so I would like for you to try something called
+                    Hyoscyamine. It is been around forever. Anti-cramping kind of thing</p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: <span class="medication">I would keep up with your Metamucil </span></p>
+
+                <p>Patient: Alright.</p>
+
+                <p>Doctor: As you know the Irritable Bowel part of the issue is you got you got that tightness because
+                    it’s trying to push everything out. It hurts</p>
+
+                <p>Patient: Yeah</p>
+
+                <p>Doctor: Let’s do that twice a day. I need to know if you get a fever. I need to know if you get
+                    worse. If you’re not able to eat. I need to know you’re vomiting anything like that changes. Okay?
+                </p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: <span class="tests offered"> i need your blood work today for the blood count.</span></p>
+
+                <p>Patient: Okay</p>
+
+                <p>Doctor: What questions do you have?</p>
+
+                <p>Patient: Um how long before we have results for the test and I need to come back?</p>
+
+                <p>Patient: Um actually um if I can do the blood work on Friday</p>
+
+                <p>Doctor: Sure</p>
+
+                <p>Patient: Um my ins-<span class="financial">I’m waitin on my insurance card</span></p>
+
+                <p>Patient: Okay. Um is it can I do the blood work. Um <span class="financial">I get paid on Friday
+                    </span> can I come in and do that then with you?</p>
+
+                <p>Doctor: You <span class="financial">don’t have to pay when you do it. I don’t know when you
+                        pay.</span></p>
+
+                <p>Patient: I don’t know (laughs)</p>
+
+                <p>Doctor: So yeah you’re welcome to do it. I just kinda want to know what’s going on.</p>
+
+                <p>Patient: Yeah.</p>
+
+                <p>Okay very nice to meet you!</p>
+
+                <p>Patient: Nice to meet you.</p>
+
+            </div>
+
+            <div class="col-md-5" id="class-words">
+                <h2>Identified Entities</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Words</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-words-body">
+                        <!-- JavaScript will dynamically insert rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script>
+    // Function to get all words in each span class
+    function getAllWords() {
+        const classWords = {};
+        const spans = document.querySelectorAll('#transcript span');
+
+        // Collect words by class
+        spans.forEach(span => {
+            const className = span.className;
+            const words = span.textContent.trim();
+            if (!classWords[className]) {
+                classWords[className] = [];
+            }
+            classWords[className].push(words);
+        });
+
+        const tbody = document.getElementById('class-words-body');
+        tbody.innerHTML = ''; // Clear existing content
+
+        // Process each class
+        for (const className in classWords) {
+            const row = document.createElement('tr');
+
+            const classNameCell = document.createElement('td');
+            classNameCell.textContent = className;
+            row.appendChild(classNameCell);
+
+            const wordsCell = document.createElement('td');
+            wordsCell.textContent = classWords[className].join(', ');
+            row.appendChild(wordsCell);
+
+            tbody.appendChild(row);
+        }
+    }
+
+    // Call the function to get and display all words
+    getAllWords();
+    // Prepare data for the chart
+
+
+</script>
+
+</html>

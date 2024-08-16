@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Redirect</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #343a40;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            animation: fadeInUp 1.5s ease;
+            position: relative;
+        }
+
+        h1 {
+            color: #212529;
+            margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease;
+        }
+
+        textarea {
+            width: 100%;
+            height: 500px;
+            /* Increased height for longer transcripts */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #343a40;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #212529;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* Loader and background blur */
+        .loader-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent background */
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .gear {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+        }
+
+        #gear1 {
+            left: 44%;
+            transform: translate(-50%, -50%);
+            transform-origin: center;
+            animation: rotate-clockwise 4s linear infinite;
+        }
+
+        #gear2 {
+            left: 58%;
+            transform: translate(-50%, -50%) rotate(10deg);
+            /* Start with a 10-degree rotation */
+            transform-origin: center;
+            animation: rotate-counterclockwise 4s linear infinite;
+        }
+
+        .gear img {
+            width: 100%;
+            height: 100%;
+            filter: brightness(0) saturate(100%) invert(44%) sepia(92%) saturate(3154%) hue-rotate(353deg) brightness(101%) contrast(101%);
+        }
+
+        .message {
+            font-size: 18px;
+            color: #343a40;
+            margin-top: 20px;
+        }
+
+        @keyframes rotate-clockwise {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes rotate-counterclockwise {
+            from {
+                transform: translate(-50%, -50%) rotate(10deg);
+                /* Start with a 10-degree rotation */
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-346deg);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        function redirectUser() {
+            // Show the loading spinner and messages
+            const loaderContainer = document.getElementById('loader-container');
+            loaderContainer.style.display = 'flex';
+
+            const messages = [
+                "Analyzing...",
+                "Identifying Entities...",
+                "Entities Identified"
+            ];
+            let messageIndex = 0;
+            const messageElement = document.getElementById('loader-message');
+
+            // Function to update the message
+            function updateMessage() {
+                if (messageIndex < messages.length) {
+                    messageElement.textContent = messages[messageIndex];
+                    messageIndex++;
+                }
+            }
+
+            // Update the message every 2 seconds
+            const messageInterval = setInterval(updateMessage, 2000);
+
+            // Simulate a delay before redirecting
+            setTimeout(function () {
+                clearInterval(messageInterval); // Stop updating messages
+                // Get the full transcript entered by the user
+                const userInput = document.getElementById("userInput").value.trim().toLowerCase();
+
+                // Unique phrases to identify each transcript
+                const transcript1Phrase = "it’s nice to meet you. so thanks for your patience today.";
+                const transcript2Phrase = "and you’re (patient’s first and last name)?";
+
+                // Check if the user input contains one of the unique phrases
+                if (userInput.includes(transcript1Phrase)) {
+                    window.location.href = "2.html";
+                } else if (userInput.includes(transcript2Phrase)) {
+                    window.location.href = "1.html";
+                } else {
+                    alert("The transcript is not recognized.");
+                }
+                loaderContainer.style.display = 'none'; // Hide the loader
+            }, 7000); // 7 seconds delay
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Enter Your Transcript</h1>
+        <textarea id="userInput" placeholder="Paste the entire transcript here"></textarea>
+        <button onclick="redirectUser()">Submit</button>
+        <div class="loader-container" id="loader-container">
+            <div class="gear" id="gear1">
+                <img src="https://assets.codepen.io/6093409/gear.svg.png" alt="an illustration of a gear" />
+            </div>
+            <div class="gear" id="gear2">
+                <img src="https://assets.codepen.io/6093409/gear.svg.png" alt="an illustration of a gear" />
+            </div>
+            <div id="loader-message" class="message">Analyzing...</div>
+        </div>
+        <div class="footer">
+            © 2024 Transcript Redirect Tool
+        </div>
+    </div>
+</body>
+
+</html>
